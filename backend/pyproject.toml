@@ -9,5 +9,6 @@ dependencies = [
     "flask-cors>=6.0.1",
     "mcp[cli]>=1.13.1",
     "openai>=1.101.0",
+    "pre-commit>=4.3.0",
     "python-dotenv>=1.1.1",
 ]

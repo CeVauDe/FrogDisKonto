@@ -1,14 +1,13 @@
 import asyncio
+import json
 import os
-from typing import Optional
 from contextlib import AsyncExitStack
+from typing import Optional
 
+from dotenv import load_dotenv
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-
 from openai import OpenAI
-from dotenv import load_dotenv
-import json
 
 load_dotenv()  # load environment variables from .env
 
@@ -17,17 +16,16 @@ MODEL = "gpt-5-nano"
 SERVER_CONFIG = {
     "command": "uv",
     "args": [
-				"--directory",
-				"C:\\Users\\jney\\Desktop\\PRVT\\bernhack\\spendcast-mcp",
-				"run",
-				"src\\spendcast_mcp\\server.py"
-			],
-    "env": None
+        "--directory",
+        "/home/christian/projects/bernhackt/spendcast-mcp",
+        "run",
+        "src/spendcast_mcp/server.py",
+    ],
+    "env": None,
 }
 
 
 def convert_tool_format(tool):
-    i = 1
     converted_tool = {
         "type": "function",
         "function": {
@@ -36,9 +34,9 @@ def convert_tool_format(tool):
             "parameters": {
                 "type": "object",
                 "properties": tool.inputSchema.get("properties", {}),
-                "required": tool.inputSchema.get("required", [])
-            }
-        }
+                "required": tool.inputSchema.get("required", []),
+            },
+        },
     }
     return converted_tool
 
@@ -48,21 +46,27 @@ class MCPClient:
         self.session: Optional[ClientSession] = None
         self.exit_stack = AsyncExitStack()
         self.openai = OpenAI(
-            #base_url="https://openrouter.ai/api/v1",
+            # base_url="https://openrouter.ai/api/v1",
             api_key=os.environ["OPENROUTER_API_KEY"],
         )
 
     async def connect_to_server(self, server_config):
         server_params = StdioServerParameters(**server_config)
-        stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
+        stdio_transport = await self.exit_stack.enter_async_context(
+            stdio_client(server_params)
+        )
         self.stdio, self.write = stdio_transport
-        self.session = await self.exit_stack.enter_async_context(ClientSession(self.stdio, self.write))
+        self.session = await self.exit_stack.enter_async_context(
+            ClientSession(self.stdio, self.write)
+        )
 
         await self.session.initialize()
 
         # List available tools from the MCP server
         response = await self.session.list_tools()
-        print("\nConnected to server with tools:", [tool.name for tool in response.tools])
+        print(
+            "\nConnected to server with tools:", [tool.name for tool in response.tools]
+        )
 
         self.messages = []
 
@@ -81,9 +85,7 @@ class MCPClient:
         available_tools = [convert_tool_format(tool) for tool in response.tools]
 
         response = self.openai.chat.completions.create(
-            model=MODEL,
-            tools=available_tools,
-            messages=self.messages
+            model=MODEL, tools=available_tools, messages=self.messages
         )
         self.messages.append(response.choices[0].message.model_dump())
 
@@ -102,12 +104,14 @@ class MCPClient:
                 print(f"Error calling tool {tool_name}: {e}")
                 result = None
 
-            self.messages.append({
-                "role": "tool",
-                "tool_call_id": content.tool_calls[0].id,
-                "name": tool_name,
-                "content": result.content
-            })
+            self.messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": content.tool_calls[0].id,
+                    "name": tool_name,
+                    "content": result.content,
+                }
+            )
 
             response = self.openai.chat.completions.create(
                 model=MODEL,
@@ -139,6 +143,7 @@ class MCPClient:
     async def cleanup(self):
         await self.exit_stack.aclose()
 
+
 async def main():
     client = MCPClient()
     try:
@@ -147,6 +152,6 @@ async def main():
     finally:
         await client.cleanup()
 
+
 if __name__ == "__main__":
-    import sys
     asyncio.run(main())

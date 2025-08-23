@@ -1,12 +1,9 @@
-import os
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from pydantic import BaseModel
-from mcp_client import MCPClient, SERVER_CONFIG
 from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from mcp_client import SERVER_CONFIG, MCPClient
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -22,10 +19,12 @@ app.add_middleware(
 )
 
 # Single instance of MCPClient shared across requests
-mcp_client = None
+mcp_client: MCPClient | None = None
+
 
 class QueryRequest(BaseModel):
     query: str
+
 
 @app.post("/api/query")
 async def process_query(request: QueryRequest):
@@ -33,7 +32,7 @@ async def process_query(request: QueryRequest):
     if mcp_client is None:
         mcp_client = MCPClient()
         await mcp_client.connect_to_server(SERVER_CONFIG)
-    
+
     result = await mcp_client.process_query(request.query)
     return {"result": result}
 
