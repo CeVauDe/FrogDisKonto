@@ -20,6 +20,7 @@
             :isUser="message.isUser"
             :timestamp="message.timestamp"
           />
+          <audio v-if="audioUrl" :src="audioUrl" controls autoplay />
         </div>
 
         <div v-if="isTyping" class="flex gap-3 justify-start mb-4">
@@ -61,8 +62,8 @@ export default {
       },
     ]);
     const isTyping = ref(false);
-
     const scrollContainer = ref(null);
+    const audioUrl = ref(null);
 
     const scrollToBottom = async () => {
       await nextTick();
@@ -102,9 +103,19 @@ export default {
           isUser: false,
           timestamp: new Date(),
         };
-        messages.value.push(botMessage)
 
-        // messages.value.push(botMessage);
+        if(data.audio_url !== null) {
+             // Create a local object URL
+            audioUrl.value = URL.createObjectURL(blob);
+
+            // Play audio
+            const audio = new Audio(audioUrl.value);
+            audio.play();
+
+        } else {
+            messages.value.push(botMessage)
+        }
+
         isTyping.value = false;
         scrollToBottom();
       }, 1000 + Math.random() * 2000);
@@ -114,7 +125,8 @@ export default {
       messages,
       isTyping,
       handleSendMessage,
-      scrollContainer
+      scrollContainer,
+      audioUrl
     };
   },
 };
