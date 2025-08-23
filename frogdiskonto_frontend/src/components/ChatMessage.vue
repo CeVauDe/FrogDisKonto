@@ -1,8 +1,8 @@
 <template>
   <div :class="['flex gap-3', isUser ? 'justify-end' : 'justify-start', 'mb-4']">
     <template v-if="!isUser">
-        <div class="bg-primary text-primary-foreground h-8 w-8 mt-1 flex items-center justify-center">
-            <i class="h-4 w-4 fas fa-robot"></i>
+        <div class="bg-primary text-primary-foreground h-8 w-8 mt-1 flex items-center justify-center rounded-full">
+            <img :src="bot" class="h-4 w-4" />
         </div>
     </template>
 
@@ -16,18 +16,24 @@
     </div>
 
     <template v-if="isUser">
-  <div class="bg-secondary text-secondary-foreground h-8 w-8 mt-1 flex items-center justify-center">
-    <i class="h-4 w-4 fa-regular fa-user"></i>
-  </div>
-</template>
+      <div class="bg-secondary text-secondary-foreground h-8 w-8 mt-1 flex items-center justify-center rounded-full">
+        <i class="h-4 w-4 fa-regular fa-user"></i>
+      </div>
+    </template>
 
   </div>
 </template>
 
 <script>
+import bot from '../assets/bot.png';
 
 export default {
   name: 'ChatMessage',
+  data() {
+    return {
+    bot
+    };
+  },
   props: {
     message: {
       type: String,
