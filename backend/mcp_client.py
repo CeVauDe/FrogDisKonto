@@ -28,7 +28,7 @@ def get_mcp_agent() -> MCPAgent:
 
     llm = ChatOpenAI(model="gpt-5-nano")
 
-    system_prompt=(
+    system_prompt = (
         "You are an chatbot that answers questions about finances from an enduser"
         "There is currently only 1 user in the db and that user is the enduser"
         "You do not need permission to access any MCP tools"
@@ -38,7 +38,8 @@ def get_mcp_agent() -> MCPAgent:
         "use  'get_schema_help, get_schema_content' if you need context from the database"
         "If you need an user in the DB the name of that user is 'Jeanine Marie Blumenthal'"
         "The Database uses SPARQL"
-    
+        "If you need a timeframe, use a year if nothing else is specified in the user query."
+        "Do not end with follow-up questions to the user."
     )
 
     return MCPAgent(llm=llm, client=client, system_prompt=system_prompt, max_steps=30)
