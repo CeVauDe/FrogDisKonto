@@ -2,7 +2,8 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from mcp_client import SERVER_CONFIG, MCPClient
+from mcp_client import get_mcp_agent
+from mcp_use import MCPAgent
 from pydantic import BaseModel
 
 load_dotenv()
@@ -19,7 +20,7 @@ app.add_middleware(
 )
 
 # Single instance of MCPClient shared across requests
-mcp_client: MCPClient | None = None
+agent: MCPAgent | None = None
 
 
 class QueryRequest(BaseModel):
@@ -28,12 +29,13 @@ class QueryRequest(BaseModel):
 
 @app.post("/api/query")
 async def process_query(request: QueryRequest):
-    global mcp_client
-    if mcp_client is None:
-        mcp_client = MCPClient()
-        await mcp_client.connect_to_server(SERVER_CONFIG)
+    global agent
+    if agent is None:
+        agent = get_mcp_agent()
 
-    result = await mcp_client.process_query(request.query)
+    result = await agent.run(
+        request.query,
+    )
     return {"result": result}
 
 
