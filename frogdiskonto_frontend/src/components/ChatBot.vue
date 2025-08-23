@@ -105,13 +105,7 @@ export default {
         };
 
         if(data.audio_url !== null) {
-             // Create a local object URL
-            audioUrl.value = URL.createObjectURL(blob);
-
-            // Play audio
-            const audio = new Audio(audioUrl.value);
-            audio.play();
-
+          audioUrl.value = data.audio_url;
         } else {
             messages.value.push(botMessage)
         }
