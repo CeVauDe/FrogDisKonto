@@ -14,6 +14,7 @@ This is the backend service for the FrogDisKonto project, which provides an API 
 
 ```
 OPENROUTER_API_KEY=your_openrouter_api_key_here
+SPENDCAST_MCP_DIR=/path/to/spendcast-mcp
 ```
 
 ## Installation
