@@ -21,10 +21,8 @@
             :timestamp="message.timestamp"
           />
         </div>
+        <audio v-if="audioUrl" :src="audioUrl" controls autoplay />
 
-        <div v-if="audioUrl" class="voice-message">
-            <audio v-if="audioUrl" :src="audioUrl" controls autoplay />
-        </div>
         <div v-if="isTyping" class="flex gap-3 justify-start mb-4">
           <div class="bg-muted text-muted-foreground px-4 py-2 rounded-2xl">
             <div class="flex space-x-1">
@@ -127,23 +125,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.voice-message {
-  background-color: #fff9db; /* soft yellow background */
-  border: 1px solid #facc15; /* yellow border */
-  padding: 12px 16px;
-  border-radius: 16px;
-  max-width: 320px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-/* Style native audio element */
-.voice-message audio {
-  width: 100%;
-  outline: none;
-  accent-color: #facc15; /* Yellow progress + buttons (modern browsers) */
-  background-color: transparent;
-  border: none;
-}
-</style>
