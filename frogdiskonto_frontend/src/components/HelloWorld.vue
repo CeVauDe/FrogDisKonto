@@ -29,14 +29,10 @@ export default {
   methods: {
     sendMessage() {
       if (this.userInput.trim() === '') return;
-
-      // Add user message
       this.messages.push({ text: this.userInput, isUser: true });
 
-      // Simulate bot response
-      this.messages.push({ text: "Bot: " + this.userInput, isUser: false });
+      this.messages.push({ text: "Bot: ", isUser: false });
 
-      // Clear input
       this.userInput = '';
 
       // Scroll to the bottom of the chat
