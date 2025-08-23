@@ -18,9 +18,9 @@ SERVER_CONFIG = {
     "command": "uv",
     "args": [
 				"--directory",
-				"/home/christian/projects/bernhackt/spendcast-mcp",
+				"C:\\Users\\jney\\Desktop\\PRVT\\bernhack\\spendcast-mcp",
 				"run",
-				"src/spendcast_mcp/server.py"
+				"src\\spendcast_mcp\\server.py"
 			],
     "env": None
 }
@@ -67,6 +67,10 @@ class MCPClient:
         self.messages = []
 
     async def process_query(self, query: str) -> str:
+        self.messages.append({
+            "role": "developer",
+            "content": "You are a chatbot that answers question about the financial status of an user. The enduser doesnt want to know anything about the db specific, only about the values inside the db. there is currently only 1 user in the db so answer any question with that user. You have access to an db that has all the finacial information of the user."
+        })
 
         self.messages.append({
             "role": "user",
@@ -93,7 +97,7 @@ class MCPClient:
             # Execute tool call
             try:
                 result = await self.session.call_tool(tool_name, tool_args)
-                final_text.append(f"[Calling tool {tool_name} with args {tool_args}]")
+                print(f"[Calling tool {tool_name} with args {tool_args}]")
             except Exception as e:
                 print(f"Error calling tool {tool_name}: {e}")
                 result = None
@@ -107,7 +111,7 @@ class MCPClient:
 
             response = self.openai.chat.completions.create(
                 model=MODEL,
-                max_completion_tokens=1000,
+                max_completion_tokens=10000,
                 messages=self.messages,
             )
 
