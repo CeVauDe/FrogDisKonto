@@ -1,17 +1,19 @@
 <template>
   <div class="min-h-screen bg-background">
-    <ChatBot />
+      <SplashScreen v-if="showSplash" :onComplete="handleComplete" />
+      <ChatBot v-else />
   </div>
 </template>
 
-<script>
-import ChatBot from './components/ChatBot.vue';
-import '@fortawesome/fontawesome-free/css/all.css';
+<script setup>
+import { ref } from 'vue'
+import ChatBot from './components/ChatBot.vue'
+import SplashScreen from '@/components/SplashScreen.vue'
+import '@fortawesome/fontawesome-free/css/all.css'
 
-export default {
-  name: 'App',
-  components: {
-    ChatBot,
-  },
-};
+const showSplash = ref(true)
+function handleComplete() {
+  showSplash.value = false
+}
 </script>
+
