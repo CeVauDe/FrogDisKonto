@@ -17,7 +17,7 @@ SERVER_CONFIG = {
     "command": "uv",
     "args": [
         "--directory",
-        "/home/christian/projects/bernhackt/spendcast-mcp",
+        os.getenv("SPENDCAST_MCP_DIR"),
         "run",
         "src/spendcast_mcp/server.py",
     ],
