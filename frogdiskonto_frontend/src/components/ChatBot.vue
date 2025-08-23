@@ -100,16 +100,23 @@ export default {
       isTyping.value = true;
 
       // Simulate bot response delay
-      setTimeout(() => {
-        const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+      setTimeout(async () => {
+        const res = await fetch('http://localhost:5000/api/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: messageText })
+        })
+        const data = await res.json()
+        console.log(data)
         const botMessage = {
           id: (Date.now() + 1).toString(),
-          text: randomResponse,
+          text: data.result,
           isUser: false,
           timestamp: new Date(),
         };
+        messages.value.push(botMessage)
 
-        messages.value.push(botMessage);
+        // messages.value.push(botMessage);
         isTyping.value = false;
       }, 1000 + Math.random() * 2000);
     };
