@@ -91,7 +91,7 @@ class MCPClient:
             # Execute tool call
             try:
                 result = await self.session.call_tool(tool_name, tool_args)
-                final_text.append(f"[Calling tool {tool_name} with args {tool_args}]")
+                print(f"[Calling tool {tool_name} with args {tool_args}]")
             except Exception as e:
                 print(f"Error calling tool {tool_name}: {e}")
                 result = None
