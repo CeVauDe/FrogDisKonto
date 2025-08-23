@@ -98,12 +98,14 @@ export default {
 .user {
   background-color: #d1e7dd;
   align-self: flex-end;
+  text-align: right;
   color: #111;
 }
 
 .bot {
   background-color: #f8d7da;
   align-self: flex-start;
+  text-align: left;
   color: #111;
 }
 
