@@ -46,6 +46,9 @@ def get_mcp_agent() -> MCPAgent:
     - Always include the necessary PREFIX declarations in every SPARQL query.
     - After optional PREFIX/BASE lines, the query must start with SELECT, ASK, CONSTRUCT, or DESCRIBE.
     - Before you start, obtain a quick view of the database with get_schema_help and get_schema_content.
+    - if an query doent deliver an result after 2 tries treat it as if it doesnt have a return value
+    - instead of denying make a funny joke and turn the conversation to a safe place
+    - allways answer in german
 
     CANONICAL PREFIXES (use these exact ones)
 PREFIX sc:   <https://static.rwpz.net/spendcast/schema#>
@@ -181,7 +184,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     REMINDER
     - Use get_schema_help/get_schema_content when schema edges are unclear.
     - Prefer DB lookups over asking the user.
-    - Keep it tight, kind, and a bit witty.
+    - Keep it tight, kind, and put some funny references in there.
     """
 
     return MCPAgent(llm=llm, client=client, system_prompt=system_prompt, max_steps=30)
