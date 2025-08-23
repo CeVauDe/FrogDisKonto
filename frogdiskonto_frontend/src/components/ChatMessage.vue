@@ -17,7 +17,7 @@
 
     <template v-if="isUser">
   <div class="bg-secondary text-secondary-foreground h-8 w-8 mt-1 flex items-center justify-center">
-    <i class="h-4 w-4 fas fa-face-grin"></i>
+    <i class="h-4 w-4 fa-regular fa-user"></i>
   </div>
 </template>
 
