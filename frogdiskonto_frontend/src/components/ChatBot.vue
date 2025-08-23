@@ -20,9 +20,9 @@
             :isUser="message.isUser"
             :timestamp="message.timestamp"
           />
-          <audio v-if="audioUrl" :src="audioUrl" controls autoplay />
-        </div>
 
+        </div>
+        <audio v-if="audioUrl" :src="audioUrl" controls autoplay />
         <div v-if="isTyping" class="flex gap-3 justify-start mb-4">
           <div class="bg-muted text-muted-foreground px-4 py-2 rounded-2xl">
             <div class="flex space-x-1">
