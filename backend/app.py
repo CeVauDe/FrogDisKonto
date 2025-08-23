@@ -51,7 +51,10 @@ async def process_query(request: QueryRequest):
 
     tts.save(audio_dir / "example.mp3")
 
-    return {"result": result, "audio_url": "/static/audio/example.mp3"}
+    return {
+        "result": result,
+        "audio_url": "http://localhost:5000/static/audio/example.mp3",
+    }
 
 
 if __name__ == "__main__":
