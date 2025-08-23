@@ -12,6 +12,7 @@ from openai import OpenAI
 load_dotenv()  # load environment variables from .env
 
 MODEL = "gpt-5-nano"
+MAX_HOPS = 4
 
 SERVER_CONFIG = {
     "command": "uv",
@@ -71,6 +72,7 @@ class MCPClient:
         self.messages = []
 
     async def process_query(self, query: str) -> str:
+        self.messages.append({"role": "developer","content": "You are a chatbot that answers question about the financial status of an user. The enduser is not technical and only cares about the values inside the db. there is currently only 1 user in the db so answer any question with that user. You have access to an db that has all the finacial information of the user through MCP. Make the final response not too long, you do not need confirmation for the ussage of the MCP server. Do not talk about MCP only use it. Do not make things up, allways look them in the db up. Take the Database as a reference, allways look it up, do not make it up. You get an fixed number of hops that you can make. A hop is when you get feed your previous response so that you can use the MCP multiple times per request. Never add the sql that you ran in the response"})
         self.messages.append({"role": "user", "content": query})
 
         response = await self.session.list_tools()
@@ -80,40 +82,50 @@ class MCPClient:
             model=MODEL, tools=available_tools, messages=self.messages
         )
         self.messages.append(response.choices[0].message.model_dump())
+ 
 
         final_text = []
         content = response.choices[0].message
-        if content.tool_calls is not None:
-            tool_name = content.tool_calls[0].function.name
-            tool_args = content.tool_calls[0].function.arguments
-            tool_args = json.loads(tool_args) if tool_args else {}
+        for hop in range(MAX_HOPS):
+            if content.tool_calls is not None:
 
-            # Execute tool call
-            try:
-                result = await self.session.call_tool(tool_name, tool_args)
-                print(f"[Calling tool {tool_name} with args {tool_args}]")
-            except Exception as e:
-                print(f"Error calling tool {tool_name}: {e}")
-                result = None
+                for tool_call in content.tool_calls:
+                    tool_name = tool_call.function.name
+                    tool_args = tool_call.function.arguments
+                    tool_args = json.loads(tool_args) if tool_args else {}
 
-            self.messages.append(
-                {
-                    "role": "tool",
-                    "tool_call_id": content.tool_calls[0].id,
-                    "name": tool_name,
-                    "content": result.content,
-                }
-            )
+                    # Execute tool call
+                    try:
+                        result = await self.session.call_tool(tool_name, tool_args)
+                        print(f"[Calling tool {tool_name} with args {tool_args}]")
+                    except Exception as e:
+                        print(f"Error calling tool {tool_name}: {e}")
+                        result = None
 
-            response = self.openai.chat.completions.create(
-                model=MODEL,
-                max_completion_tokens=1000,
-                messages=self.messages,
-            )
+                    self.messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "name": tool_name,
+                            "content": result.content,
+                            "require_approval": "never"
+                        }
+                    )
 
-            final_text.append(response.choices[0].message.content)
-        else:
-            final_text.append(content.content)
+                self.messages.append({
+                    "role": "system",
+                    "content": f"You have {MAX_HOPS - hop} hops remaining before the conversation will be cut off."
+                })
+
+                response = self.openai.chat.completions.create(
+                    model=MODEL,
+                    messages=self.messages,
+                )
+
+                content = response.choices[0].message
+            else:
+                final_text.append(content.content)
+                break
 
         return "\n".join(final_text)
 
