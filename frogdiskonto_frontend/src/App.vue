@@ -30,13 +30,8 @@ export default {
     sendMessage() {
       if (this.userInput.trim() === '') return;
 
-      // Add user message
       this.messages.push({ text: this.userInput, isUser: true });
-
-      // Simulate bot response
-      this.messages.push({ text: "Bot: " + this.userInput, isUser: false });
-
-      // Clear input
+      this.messages.push({ text: "Bot: thinking....", isUser: false });
       this.userInput = '';
 
       // Scroll to the bottom of the chat
@@ -73,21 +68,16 @@ export default {
   background-color: #f9f9f9;
 }
 
-.message {
-  margin: 5px 0;
-  padding: 8px;
-  border-radius: 5px;
-  max-width: 80%; /* Limit message width */
-}
-
 .user {
   background-color: #d1e7dd;
   align-self: flex-end;
+  color: #111;
 }
 
 .bot {
   background-color: #f8d7da;
   align-self: flex-start;
+  color: #111;
 }
 
 .input-area {
@@ -101,7 +91,7 @@ input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px; /* Larger font for better readability */
+  font-size: 16px;
 }
 
 button {
@@ -112,14 +102,13 @@ button {
   background-color: #007bff;
   color: white;
   cursor: pointer;
-  font-size: 16px; /* Larger button for better usability */
+  font-size: 16px;
 }
 
 button:hover {
   background-color: #0056b3;
 }
 
-/* Responsive styles */
 @media (max-width: 600px) {
   .chatbot {
     width: 100%;
@@ -127,7 +116,7 @@ button:hover {
   }
 
   .input-area {
-    flex-direction: column; /* Stack input and button */
+    flex-direction: grid;
   }
 
   button {
