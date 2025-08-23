@@ -31,7 +31,9 @@ export default {
       if (this.userInput.trim() === '') return;
 
       this.messages.push({ text: this.userInput, isUser: true });
-      this.messages.push({ text: "Bot: thinking....", isUser: false });
+
+      const res = this.sendToAI(this.userInput)
+      this.messages.push({ text: "Bot: " + res.content, isUser: false });
       this.userInput = '';
 
       // Scroll to the bottom of the chat
@@ -39,6 +41,31 @@ export default {
         const messagesContainer = this.$refs.messages;
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       });
+    },
+    sendToAI(userInput) {
+        // TODO: Get infor from endpoint somehow
+        console.log(userInput)
+
+        // TESTING
+        const getRandomWord = (length) => {
+        let word = '';
+        for (let i = 0; i < length; i++) {
+          // Generate a random character code between 97 (a) and 122 (z)
+          const randomCharCode = Math.floor(Math.random() * 26) + 97;
+          word += String.fromCharCode(randomCharCode);
+        }
+        return word;
+        };
+
+        let sentence = '';
+        let wordCount = Math.floor(Math.random() * (15)) + 5;
+        for (let i = 0; i < wordCount; i++) {
+        const wordLength = Math.floor(Math.random() * 5) + 3;
+        sentence += getRandomWord(wordLength) + (i < wordCount - 1 ? ' ' : '.');
+        }
+
+        const output = sentence.charAt(0).toUpperCase() + sentence.slice(1); // Capitalize first letter
+        return {status: 200, content: output }
     }
   }
 };
