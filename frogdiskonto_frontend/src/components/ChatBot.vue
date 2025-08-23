@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    <div class="flex-1 p-4">
+    <div class="flex-1 p-4 overflow-y-auto" ref="scrollContainer">
       <div class="space-y-4">
         <div v-for="message in messages" :key="message.id">
           <ChatMessage
@@ -39,21 +39,10 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, nextTick, watch } from 'vue';
 import  ChatMessage  from './ChatMessage.vue';
 import  ChatInput  from './ChatInput.vue';
 import Rectangle1 from '../imports/Rectangle1.vue';
-
-const mockResponses = [
-  "Basierend auf deinen Ausgabendaten vom letzten Monat sehe ich tatsächlich eine Verbesserung! Du hast 12% weniger für Restaurants ausgegeben und deine Lebensmittelkosten um 8% reduziert. Soll ich dir eine detaillierte Analyse als Podcast erstellen?",
-  "Ja, definitiv! Deine Ausgaben für Transport sind um 15% gesunken. Das entspricht einer Ersparnis von CHF 89. Möchtest du, dass ich dir das als Rapsong zusammenfasse?",
-  "Interessante Frage! Lass mich deine Ausgabenmuster analysieren... Ich sehe positive Trends bei deinen Fixkosten. Soll ich dir ein Comic dazu erstellen?",
-  "Deine Sparrate hat sich um 6% verbessert! Das zeigt, dass du bewusster mit deinem Geld umgehst. Möchtest du ein Video mit Tipps für weitere Verbesserungen?",
-  "Großartig, dass du deine Finanzen reflektierst! Deine Ausgaben für Online-Shopping sind deutlich gesunken. Welches Format bevorzugst du für die Analyse?",
-  "Ich kann eine Verbesserung bei deinen variablen Ausgaben feststellen. 18% weniger Impulskäufe als letzten Monat! Soll ich dir das als Podcast erklären?",
-  "Deine Budgetdisziplin zahlt sich aus! Die Ausgaben für Unterhaltung sind im Rahmen geblieben. Möchtest du einen Rapsong über deine Erfolge?",
-  "Absolut! Besonders bei den Nebenkategorien sehe ich Verbesserungen. Soll ich dir ein Comic mit deinen Top 3 Sparerfolgen erstellen?",
-];
 
 export default {
   name: 'ChatBot',
@@ -72,14 +61,13 @@ export default {
       },
     ]);
     const isTyping = ref(false);
-    const scrollAreaRef = ref(null);
 
-    const scrollToBottom = () => {
-      if (scrollAreaRef.value) {
-        const scrollContainer = scrollAreaRef.value.querySelector('[data-radix-scroll-area-viewport]');
-        if (scrollContainer) {
-          scrollContainer.scrollTop = scrollContainer.scrollHeight;
-        }
+    const scrollContainer = ref(null);
+
+    const scrollToBottom = async () => {
+      await nextTick();
+      if (scrollContainer.value) {
+        scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
       }
     };
 
@@ -97,9 +85,9 @@ export default {
       };
 
       messages.value.push(userMessage);
+      scrollToBottom();
       isTyping.value = true;
 
-      // Simulate bot response delay
       setTimeout(async () => {
         const res = await fetch('http://localhost:5000/api/query', {
           method: 'POST',
@@ -118,14 +106,15 @@ export default {
 
         // messages.value.push(botMessage);
         isTyping.value = false;
+        scrollToBottom();
       }, 1000 + Math.random() * 2000);
     };
 
     return {
       messages,
       isTyping,
-      scrollAreaRef,
       handleSendMessage,
+      scrollContainer
     };
   },
 };
