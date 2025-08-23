@@ -6,15 +6,17 @@ This is the backend service for the FrogDisKonto project, which provides an API 
 
 - Python 3.12 or higher
 - [uv](https://github.com/astral-sh/uv) - Python package installer and environment manager
-- A local running instance of the MCP server ([SpendCastAI Repos](https://github.com/spendcastai/))
+- A local instance of the MCP server [SpendCastAI Repos](https://github.com/spendcastai/)
+- A local instance of the MCP server [OpenFoodFacts MCP](https://github.com/JagjeevanAK/OpenFoodFacts-MCP)
 
 ## Environment Setup
 
 1. Create a `.env` file in the backend directory with the following variables:
 
 ```
-OPENROUTER_API_KEY=your_openrouter_api_key_here
+OPENAI_API_KEY=your_openrouter_api_key_here
 SPENDCAST_MCP_DIR=/path/to/spendcast-mcp
+OPENFOODFACTS_MCP_PATH=/path/to/OpenFoodFacts-MCP/dist/cli.js
 ```
 
 ## Installation
