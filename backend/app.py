@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # Single instance of MCPClient shared across requests
-mcp_client = None
+mcp_client: MCPClient | None = None
 
 class QueryRequest(BaseModel):
     query: str
