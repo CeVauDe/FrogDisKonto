@@ -46,7 +46,7 @@ async def process_query(request: QueryRequest):
     audio_dir = Path("static/audio")
     audio_dir.mkdir(parents=True, exist_ok=True)
 
-    tts = gTTS(text=result, lang="en", slow=False)
+    tts = gTTS(text=result, lang="de", slow=False)
 
     tts.save(audio_dir / "example.mp3")
 
