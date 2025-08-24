@@ -26,7 +26,7 @@ def get_mcp_agent() -> MCPAgent:
     }
     client = MCPClient.from_dict(config)
 
-    llm = ChatOpenAI(model="gpt-5-nano")
+    llm = ChatOpenAI(model="gpt-4.1")
 
     system_prompt = """
     ROLE

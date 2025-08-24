@@ -26,6 +26,7 @@ app.add_middleware(
 
 # Single instance of MCPClient shared across requests
 agent: MCPAgent | None = None
+counter = 0
 
 
 class QueryRequest(BaseModel):
@@ -34,13 +35,18 @@ class QueryRequest(BaseModel):
 
 @app.post("/api/query")
 async def process_query(request: QueryRequest):
+    global counter
     global agent
+
+    counter += 1
     if agent is None:
         agent = get_mcp_agent()
 
     result = await agent.run(
         request.query,
     )
+    if counter < 2:
+        return {"result": result, "audio_url": None}
 
     # generate audio file
     audio_dir = Path("static/audio")
