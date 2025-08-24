@@ -16,6 +16,7 @@
 - Backend in Python mit FastAPI für eine leichtgewichtige, asynchrone und skalierbare API
 - Verwendung eines Graphdatenbank-Ansatzes (GraphDB + SPARQL) zur Modellierung und Analyse von Finanzwissen
 - Einsatz von Generativer KI (LLMs + Audio-/Video-Generation) zur kreativen Darstellung von Nutzerfinanzen
+- Nutzung von mehreren MCP Servern um dem LLM Zugriff auf die Finanz- und weiterführende Daten zu geben
 - Starke UX-Fokussierung: z.B. automatische Scroll-Effekte, animierte Ladezustände, Splashscreens
 
 ### Technischer Aufbau
@@ -47,7 +48,7 @@ Technisch besonders cool:
 - Einfache Architektur, aber sehr expressive UX durch Motion und Feeling
 
 ### Abgrenzung / Offene Punkte
-❌ Keine Authentifizierung oder Sicherheitslogik: Fokus liegt aktuell auf Demo & Konzept  
-❌ Keine Live-Bankdaten-Anbindung – es wird mit vorbereiteten (aber realitätsnahen) Transaktionsdaten gearbeitet  
-❌ Kein Fine-Tuning der AI – stattdessen Prompt Engineering über Middleware  
+❌ Keine Authentifizierung oder Sicherheitslogik: Fokus liegt aktuell auf Demo & Konzept
+❌ Keine Live-Bankdaten-Anbindung – es wird mit vorbereiteten (aber realitätsnahen) Transaktionsdaten gearbeitet
+❌ Kein Fine-Tuning der AI – stattdessen Prompt Engineering über Middleware
 Fokus liegt auf Prototyping, User Experience & Storytelling. Sicherheit und Datenschutz erfordern gesonderte Betrachtung und Zeitbudget.
