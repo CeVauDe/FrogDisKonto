@@ -1,7 +1,11 @@
+from pathlib import Path
+
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from gtts import gTTS
 from mcp_client import get_mcp_agent
 from mcp_use import MCPAgent
 from pydantic import BaseModel
@@ -9,6 +13,7 @@ from pydantic import BaseModel
 load_dotenv()
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Enable CORS
 app.add_middleware(
@@ -21,6 +26,7 @@ app.add_middleware(
 
 # Single instance of MCPClient shared across requests
 agent: MCPAgent | None = None
+counter = 0
 
 
 class QueryRequest(BaseModel):
@@ -29,14 +35,31 @@ class QueryRequest(BaseModel):
 
 @app.post("/api/query")
 async def process_query(request: QueryRequest):
+    global counter
     global agent
+
+    counter += 1
     if agent is None:
         agent = get_mcp_agent()
 
     result = await agent.run(
         request.query,
     )
-    return {"result": result}
+    if counter < 2:
+        return {"result": result, "audio_url": None}
+
+    # generate audio file
+    audio_dir = Path("static/audio")
+    audio_dir.mkdir(parents=True, exist_ok=True)
+
+    tts = gTTS(text=result, lang="de", slow=False)
+
+    tts.save(audio_dir / "example.mp3")
+
+    return {
+        "result": result,
+        "audio_url": "http://localhost:5000/static/audio/example.mp3",
+    }
 
 
 if __name__ == "__main__":

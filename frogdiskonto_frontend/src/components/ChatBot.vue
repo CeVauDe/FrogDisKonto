@@ -21,6 +21,7 @@
             :timestamp="message.timestamp"
           />
         </div>
+        <audio v-if="audioUrl" :src="audioUrl" controls autoplay />
 
         <div v-if="isTyping" class="flex gap-3 justify-start mb-4">
           <div class="bg-muted text-muted-foreground px-4 py-2 rounded-2xl">
@@ -61,8 +62,8 @@ export default {
       },
     ]);
     const isTyping = ref(false);
-
     const scrollContainer = ref(null);
+    const audioUrl = ref(null);
 
     const scrollToBottom = async () => {
       await nextTick();
@@ -102,9 +103,13 @@ export default {
           isUser: false,
           timestamp: new Date(),
         };
-        messages.value.push(botMessage)
 
-        // messages.value.push(botMessage);
+        if(data.audio_url !== null) {
+          audioUrl.value = data.audio_url;
+        } else {
+            messages.value.push(botMessage)
+        }
+
         isTyping.value = false;
         scrollToBottom();
       }, 1000 + Math.random() * 2000);
@@ -114,7 +119,8 @@ export default {
       messages,
       isTyping,
       handleSendMessage,
-      scrollContainer
+      scrollContainer,
+      audioUrl
     };
   },
 };
